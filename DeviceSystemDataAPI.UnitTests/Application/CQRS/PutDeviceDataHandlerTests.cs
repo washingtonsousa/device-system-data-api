@@ -1,0 +1,82 @@
+using Application.CQRS.Command.PutDeviceData;
+using Application.CQRS.Command.PutDeviceData.GetPagedDeviceData;
+using Domain.Constants;
+using Domain.Entities;
+using Domain.Repositories;
+using Domain.UnityOfWork;
+using Moq;
+
+namespace DeviceSystemDataAPI.UnitTests.Application.CQRS
+{
+    public class PutDeviceDataHandlerTests
+    {
+        private readonly Mock<IDeviceDataRepository> _repositoryMock = new();
+        private readonly Mock<IUnityOfWork> _uowMock = new();
+
+        public PutDeviceDataHandlerTests()
+        {
+            _uowMock.Setup(u => u.CommitAsync()).ReturnsAsync(true);
+        }
+
+        [Fact]
+        public async Task ShouldUpdateDeviceAndCommit()
+        {
+            var device = DeviceData.CreateDeviceData("Iphone 15", "Apple", Parameters.Available);
+            _repositoryMock.Setup(r => r.GetByIdAsync("123", false)).ReturnsAsync(device);
+
+            var handler = new PutDeviceDataHandler(_repositoryMock.Object, _uowMock.Object);
+            var result = await handler.Handle(
+                new PutDeviceDataCommand
+                {
+                    DeviceId = "123",
+                    Name = "Updated",
+                    Brand = "NewBrand",
+                    State = Parameters.InUse
+                },
+                CancellationToken.None
+            );
+
+            Assert.Equal("Updated", result.Name);
+            Assert.Equal("NewBrand", result.Brand);
+            Assert.Equal(Parameters.InUse, result.State);
+            _uowMock.Verify(u => u.CommitAsync(), Times.Once);
+        }
+
+        [Fact]
+        public async Task ShouldThrowKeyNotFoundException_WhenDeviceDoesNotExist()
+        {
+            _repositoryMock.Setup(r => r.GetByIdAsync("999", false)).ReturnsAsync((DeviceData?)null);
+
+            var handler = new PutDeviceDataHandler(_repositoryMock.Object, _uowMock.Object);
+
+            await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+                handler.Handle(
+                    new PutDeviceDataCommand { DeviceId = "999" },
+                    CancellationToken.None
+                )
+            );
+        }
+
+        [Fact]
+        public async Task ShouldThrowInvalidOperationException_WhenDeviceIsInUse()
+        {
+            var device = DeviceData.CreateDeviceData("Iphone 15", "Apple", Parameters.InUse);
+            _repositoryMock.Setup(r => r.GetByIdAsync("123", false)).ReturnsAsync(device);
+
+            var handler = new PutDeviceDataHandler(_repositoryMock.Object, _uowMock.Object);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                handler.Handle(
+                    new PutDeviceDataCommand
+                    {
+                        DeviceId = "123",
+                        Name = "Updated",
+                        Brand = "NewBrand",
+                        State = Parameters.Available
+                    },
+                    CancellationToken.None
+                )
+            );
+        }
+    }
+}
