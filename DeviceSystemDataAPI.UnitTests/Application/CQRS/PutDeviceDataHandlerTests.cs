@@ -29,15 +29,15 @@ namespace DeviceSystemDataAPI.UnitTests.Application.CQRS
                 new PutDeviceDataCommand
                 {
                     DeviceId = "123",
-                    Name = "Updated",
-                    Brand = "NewBrand",
+                    Name = "Iphone 16",
+                    Brand = "Apple",
                     State = Parameters.InUse
                 },
                 CancellationToken.None
             );
 
-            Assert.Equal("Updated", result.Name);
-            Assert.Equal("NewBrand", result.Brand);
+            Assert.Equal("Iphone 16", result.Name);
+            Assert.Equal("Apple", result.Brand);
             Assert.Equal(Parameters.InUse, result.State);
             _uowMock.Verify(u => u.CommitAsync(), Times.Once);
         }
@@ -51,7 +51,13 @@ namespace DeviceSystemDataAPI.UnitTests.Application.CQRS
 
             await Assert.ThrowsAsync<KeyNotFoundException>(() =>
                 handler.Handle(
-                    new PutDeviceDataCommand { DeviceId = "999" },
+                    new PutDeviceDataCommand
+                    {
+                        DeviceId = "999",
+                        Name = "Iphone 15",
+                        Brand = "Apple",
+                        State = Parameters.Available
+                    },
                     CancellationToken.None
                 )
             );
@@ -70,8 +76,8 @@ namespace DeviceSystemDataAPI.UnitTests.Application.CQRS
                     new PutDeviceDataCommand
                     {
                         DeviceId = "123",
-                        Name = "Updated",
-                        Brand = "NewBrand",
+                        Name = "Iphone 16",
+                        Brand = "Apple",
                         State = Parameters.Available
                     },
                     CancellationToken.None

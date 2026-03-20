@@ -18,7 +18,7 @@ namespace DeviceSystemDataAPI.UnitTests.Domain
                 .Options;
 
             _context = new DatabaseContext(options);
-            _repository = Redmi NoteDataRepository(_context);
+            _repository = new DeviceDataRepository(_context);
         }
 
         public void Dispose()
@@ -73,7 +73,7 @@ namespace DeviceSystemDataAPI.UnitTests.Domain
         public async Task GetPagedAsync_ShouldFilterByBrand()
         {
             await SeedDevice("Iphone 13", "Apple", Parameters.Available);
-            await SeedDevice("Iphone 15", "Apple", Parameters.Available);
+            await SeedDevice("Galaxy S24", "Samsung", Parameters.Available);
             await SeedDevice("Iphone 16", "Apple", Parameters.InUse);
 
             var result = await _repository.GetPagedAsync(brand: "Apple");
@@ -96,11 +96,11 @@ namespace DeviceSystemDataAPI.UnitTests.Domain
         }
 
         [Fact]
-        public async Task GetPagedAsync_ShouldFilterByApplendState()
+        public async Task GetPagedAsync_ShouldFilterByBrandAndState()
         {
             await SeedDevice("Iphone 13", "Apple", Parameters.Available);
-            await SeedDevice("Iphone 15", "Apple", Parameters.InUse);
-            await SeedDevice("Iphone 16", "Apple", Parameters.Available);
+            await SeedDevice("Galaxy S24", "Samsung", Parameters.InUse);
+            await SeedDevice("Iphone 16", "Apple", Parameters.InUse);
 
             var result = await _repository.GetPagedAsync(brand: "Apple", state: Parameters.Available);
 

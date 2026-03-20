@@ -33,7 +33,7 @@ namespace DeviceSystemDataAPI.UnitTests.Domain
             var result = device.Update("Iphone 16", "Apple", Parameters.InUse);
 
             Assert.Equal("Iphone 16", device.Name);
-            Assert.Equal("BrandY", device.Brand);
+            Assert.Equal("Apple", device.Brand);
             Assert.Equal(Parameters.InUse, device.State);
             Assert.Same(device, result);
         }
