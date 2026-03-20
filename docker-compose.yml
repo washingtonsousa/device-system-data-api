@@ -1,0 +1,22 @@
+services:
+  api:
+    build: .
+    ports:
+      - "5000:8080"
+    environment:
+      - CONN_STRING=Server=172.17.0.1;Port=3306;Database=DeviceSystemData;Uid=root;Pwd=DeviceSystem2026*;
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.4
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=DeviceSystem2026*
+      - MYSQL_DATABASE=DeviceSystemData
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

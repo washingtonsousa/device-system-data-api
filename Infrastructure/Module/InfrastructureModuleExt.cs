@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Module
+namespace Infrastructure.Module
 {
     public static class InfrastructureModuleExt
     {
