@@ -22,7 +22,7 @@ namespace Application.CQRS.Query.GetDeviceData.GetPagedDeviceData
 
         public async Task<PagedResult<DeviceData>> Handle(GetPagedDeviceDataQuery request, CancellationToken cancellationToken)
         {
-            return await _deviceDataRepository.GetPaged(request.PageNumber, request.PageSize, request.Brand, request.State);
+            return await _deviceDataRepository.GetPagedAsync(request.PageNumber, request.PageSize, request.Brand, request.State);
         }
     }
 }

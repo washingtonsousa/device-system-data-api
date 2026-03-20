@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Database.Mappings
 {
+    [ExcludeFromCodeCoverage]
     public class DeviceDataMapping : IEntityTypeConfiguration<DeviceData>
     {
         public void Configure(EntityTypeBuilder<DeviceData> entity)

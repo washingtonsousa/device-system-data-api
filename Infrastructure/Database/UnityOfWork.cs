@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.UnityOfWork;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Database
 {
-    internal interface IUnityOfWork
+
+    public class UnityOfWork : IUnityOfWork
     {
-          bool Commit();
-          Task<bool> CommitAsync();   
-    }
-    internal class UnityOfWork : IUnityOfWork
-    {
+        public UnityOfWork(DatabaseContext context)
+        {
+            Context = context;
+        }
+
         DatabaseContext Context { get; }
 
         public bool Commit()

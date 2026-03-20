@@ -1,17 +1,31 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Entities;
+using Domain.Repositories;
+using Domain.UnityOfWork;
+using MediatR;
 
 namespace Application.CQRS.Command.PostDeviceData
 {
     public class PostDeviceDataHandler : IRequestHandler<PostDeviceDataCommand>
     {
+        private readonly IDeviceDataRepository _deviceDataRepository;
+        private readonly IUnityOfWork _unityOfWork;
+
+        public PostDeviceDataHandler(IDeviceDataRepository deviceDataRepository, IUnityOfWork? unityOfWork)
+        {
+            _deviceDataRepository = deviceDataRepository;
+            _unityOfWork = unityOfWork;
+        }
+
         public async Task Handle(PostDeviceDataCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+
+            if (!request.IsValid())
+                throw new ArgumentException("Invalid device data.");
+
+            var device = await _deviceDataRepository.AddAsync(DeviceData.CreateDeviceData(request.Name,request.Brand,request.State));
+
+            
+            await _unityOfWork.CommitAsync();
         }
     }
 }

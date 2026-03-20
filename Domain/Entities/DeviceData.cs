@@ -35,6 +35,8 @@ namespace Domain.Entities
 
         public DeviceData Update(string name, string brand, string state)
         {
+            if (IsInUse)
+                throw new InvalidOperationException("Name and brand cannot be updated while device is in use.");
 
             Name = name;
             Brand = brand;
@@ -43,6 +45,9 @@ namespace Domain.Entities
             return this;
         }
 
-
+        public void ChangeState(string state)
+        {
+            State = state;
+        }
     }
 }

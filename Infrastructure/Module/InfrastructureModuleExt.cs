@@ -1,4 +1,5 @@
 ﻿using Domain.Repositories;
+using Domain.UnityOfWork;
 using Infrastructure.Database;
 using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ namespace Infrastructure.Module
         {
             services.AddScoped<IDeviceDataRepository, DeviceDataRepository>();
             services.AddDbContext<DatabaseContext> ();
+            services.AddScoped<IUnityOfWork, UnityOfWork>();
         }
 
     }

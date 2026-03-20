@@ -5,7 +5,6 @@ using Application.CQRS.Command.PutDeviceData;
 using Application.CQRS.Query.GetDeviceData.GetPagedDeviceData;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DeviceSystemDataAPI.Controllers
 {
@@ -43,7 +42,7 @@ namespace DeviceSystemDataAPI.Controllers
         public async Task<IActionResult> Post([FromBody] PostDeviceDataCommand command)
         {
             await _mediator.Send(command);
-            return Ok();
+            return NoContent();
         }
 
         [HttpPut("{id}")]
@@ -55,17 +54,19 @@ namespace DeviceSystemDataAPI.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> Patch(string id, [FromBody] PatchDeviceDataCommand command)
         {
+            command.DeviceId = id;
+
             return Ok(await _mediator.Send(command));
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Patch(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             var command = new DeleteDeviceDataCommand { DeviceId = id.ToString() };
 
             await _mediator.Send(command);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

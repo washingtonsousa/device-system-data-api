@@ -15,7 +15,7 @@ namespace Application.CQRS.Query.GetDeviceData.GetSingleDeviceData
         }
         public async  Task<DeviceData> Handle(GetDeviceDataQuery request, CancellationToken cancellationToken)
         {
-            return await _deviceDataRepository.GetById(request.DeviceId);
+            return await _deviceDataRepository.GetByIdAsync(request.DeviceId);
         }
     }
 }

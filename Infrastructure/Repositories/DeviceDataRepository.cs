@@ -3,11 +3,7 @@ using Domain.Entities.Base;
 using Domain.Repositories;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Infrastructure.Repositories
 {
@@ -20,14 +16,20 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<DeviceData> GetById(string id)
-        {
-            return await _context.DeviceData.FirstOrDefaultAsync((device) =>  device.Id == id );
-        }
-
-        public async Task<PagedResult<DeviceData>> GetPaged(int page = 1, int offset = 4, string brand = null, string state = null)
+        public async Task<DeviceData> AddAsync(DeviceData deviceData) => _context.DeviceData.Add(deviceData).Entity;
+        public async Task<DeviceData> GetByIdAsync(string id, bool asNoTracking = true)
         {
             var queryable = _context.DeviceData.AsQueryable();
+
+            if(asNoTracking)
+              queryable = queryable.AsNoTracking();
+
+            return await queryable.FirstOrDefaultAsync((device) =>  device.Id == id );
+        }
+
+        public async Task<PagedResult<DeviceData>> GetPagedAsync(int page = 1, int offset = 4, string brand = null, string state = null)
+        {
+            var queryable = _context.DeviceData.AsNoTracking().AsQueryable();
 
             if(!string.IsNullOrEmpty(brand))
             {
@@ -47,5 +49,8 @@ namespace Infrastructure.Repositories
                 offset
             );
         }
+
+        public void RemoveAsync(DeviceData device) => _context.DeviceData.Remove(device);
+
     }
 }

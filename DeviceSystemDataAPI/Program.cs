@@ -1,4 +1,5 @@
 using Application.CQRS.Query.GetDeviceData.GetPagedDeviceData;
+using DeviceSystemDataAPI.Filters;
 using Infrastructure.Module;
 using System.Reflection;
 
@@ -13,9 +14,14 @@ builder.Services.AddMediatR((config) =>
     config.RegisterServicesFromAssembly(typeof(GetDeviceDataQuery).Assembly);
 });
 
+
 builder.Services.AddHealthChecks();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<RequestsExceptionsHandlerFilter>();
+});
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
