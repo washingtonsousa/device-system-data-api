@@ -4,7 +4,7 @@ services:
     ports:
       - "5000:8080"
     environment:
-      - CONN_STRING=Server=172.17.0.1;Port=3306;Database=DeviceSystemData;Uid=root;Pwd=DeviceSystem2026*;
+      - CONN_STRING=Server=mysql;Port=3306;Database=DeviceSystemData;Uid=root;Pwd=DeviceSystem2026*;
     depends_on:
       - mysql
 

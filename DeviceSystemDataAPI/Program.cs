@@ -7,32 +7,31 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructureModule();
 
-// Add services to the container.
 builder.Services.AddMediatR((config) =>
 {
-    var assemblies = AppDomain.CurrentDomain
-    .GetAssemblies()
-    .Where(a => !a.IsDynamic)
-    .ToArray();
 
-    config.RegisterServicesFromAssemblies(assemblies);
+    config.RegisterServicesFromAssembly(typeof(GetDeviceDataQuery).Assembly);
 });
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
+
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseRouting();
+
+app.UseHealthChecks("/health");
 
 app.MapControllers();
 

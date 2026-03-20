@@ -5,9 +5,8 @@ namespace Domain.Repositories
 {
     public interface IDeviceDataRepository
     {
-        public Task<PagedResult<DeviceData>> GetPaged();
-        public Task<DeviceData> GetById(Guid id);
-        public Task<DeviceData> Get(string brand, string name);
+        public Task<PagedResult<DeviceData>> GetPaged(int page = 1, int offset = 4, string brand = null, string state = null);
+        public Task<DeviceData> GetById(string id);
 
     }
 }

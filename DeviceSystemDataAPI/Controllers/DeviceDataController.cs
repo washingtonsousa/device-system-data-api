@@ -11,9 +11,9 @@ namespace DeviceSystemDataAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeviceSystemDataAPIController : ControllerBase
+    public class DeviceDataController : ControllerBase
     {
-        public DeviceSystemDataAPIController(IMediator mediator)
+        public DeviceDataController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -24,13 +24,19 @@ namespace DeviceSystemDataAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetPagedDeviceDataQuery query)
         {
+
             return Ok(await _mediator.Send(query));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get([FromRoute] GetDeviceDataQuery query)
         {
-            return Ok(await _mediator.Send(query));
+            var result = await _mediator.Send(query);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
         }
 
         [HttpPost]

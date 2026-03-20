@@ -1,19 +1,21 @@
 ﻿using Application.CQRS.Query.GetDeviceData.GetPagedDeviceData;
 using Domain.Entities;
+using Domain.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.CQRS.Query.GetDeviceData.GetSingleDeviceData
 {
     public class GetSingleDeviceDataHandler : IRequestHandler<GetDeviceDataQuery, DeviceData>
     {
-        public Task<DeviceData> Handle(GetDeviceDataQuery request, CancellationToken cancellationToken)
+        private readonly IDeviceDataRepository _deviceDataRepository;
+
+        public GetSingleDeviceDataHandler(IDeviceDataRepository deviceDataRepository)
         {
-            throw new NotImplementedException();
+            _deviceDataRepository = deviceDataRepository;
+        }
+        public async  Task<DeviceData> Handle(GetDeviceDataQuery request, CancellationToken cancellationToken)
+        {
+            return await _deviceDataRepository.GetById(request.DeviceId);
         }
     }
 }

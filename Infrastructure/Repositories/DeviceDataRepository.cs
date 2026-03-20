@@ -1,6 +1,8 @@
 ﻿using Domain.Entities;
 using Domain.Entities.Base;
 using Domain.Repositories;
+using Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,21 +13,39 @@ namespace Infrastructure.Repositories
 {
     public class DeviceDataRepository : IDeviceDataRepository
     {    
-
-
-        public Task<DeviceData> Get(string brand, string name)
+        
+        private readonly DatabaseContext _context;
+        public DeviceDataRepository(DatabaseContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<DeviceData> GetById(Guid id)
+        public async Task<DeviceData> GetById(string id)
         {
-            throw new NotImplementedException();
+            return await _context.DeviceData.FirstOrDefaultAsync((device) =>  device.Id == id );
         }
 
-        public Task<PagedResult<DeviceData>> GetPaged()
+        public async Task<PagedResult<DeviceData>> GetPaged(int page = 1, int offset = 4, string brand = null, string state = null)
         {
-            throw new NotImplementedException();
+            var queryable = _context.DeviceData.AsQueryable();
+
+            if(!string.IsNullOrEmpty(brand))
+            {
+                queryable = queryable.Where((device) => device.Brand == brand);
+            }
+
+            if (!string.IsNullOrEmpty(state))
+            {
+                queryable = queryable.Where((device) => device.State == state);
+            }
+
+            return new PagedResult<DeviceData>(
+
+                await queryable.Skip((page - 1) * offset).Take(offset).ToListAsync(),
+                page,
+                await queryable.CountAsync(),
+                offset
+            );
         }
     }
 }

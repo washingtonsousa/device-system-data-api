@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Entities.Base;
+using Domain.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,17 @@ namespace Application.CQRS.Query.GetDeviceData.GetPagedDeviceData
 {
     public class GetPagedDeviceDataHandler : IRequestHandler<GetPagedDeviceDataQuery, PagedResult<DeviceData>>
     {
-        public Task<PagedResult<DeviceData>> Handle(GetPagedDeviceDataQuery request, CancellationToken cancellationToken)
+
+        private readonly IDeviceDataRepository _deviceDataRepository;
+
+        public GetPagedDeviceDataHandler(IDeviceDataRepository deviceDataRepository)
         {
-            throw new NotImplementedException();
+            _deviceDataRepository = deviceDataRepository;
+        }
+
+        public async Task<PagedResult<DeviceData>> Handle(GetPagedDeviceDataQuery request, CancellationToken cancellationToken)
+        {
+            return await _deviceDataRepository.GetPaged(request.PageNumber, request.PageSize, request.Brand, request.State);
         }
     }
 }

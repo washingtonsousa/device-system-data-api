@@ -18,5 +18,12 @@ namespace Application.CQRS.Query.GetDeviceData.GetPagedDeviceData
         [FromQuery(Name = "brand")]
 
         public string? Brand { get; set; }
+
+        [FromQuery(Name = "state")]
+
+        public string? State { get; set; }
+
+        [FromQuery(Name = "page_size")]
+        public int PageSize { get; set; } = 4;
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database
 {
-    internal class DatabaseContext : DbContext
+    public class DatabaseContext : DbContext
     {
 
         private string ConnString
