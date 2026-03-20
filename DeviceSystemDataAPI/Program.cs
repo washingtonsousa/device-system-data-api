@@ -1,5 +1,5 @@
 using Application.CQRS.Query.GetDeviceData.GetPagedDeviceData;
-using Domain.Module;
+using Infrastructure.Module;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
