@@ -14,8 +14,8 @@ namespace Application.CQRS.Command.PutDeviceData
 {
     public class PutDeviceDataCommand : IRequest<DeviceData>
     {
-        [FromRoute(Name = "id")]
-        public string DeviceId { get; set; }
+        [JsonIgnore]
+        public string? DeviceId { get; set; }
 
         [JsonPropertyName("name")]
 

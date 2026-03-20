@@ -10,7 +10,7 @@ namespace Application.CQRS.Command.PatchDeviceData
     public class PatchDeviceDataCommand : IRequest<DeviceData>
     {
         [FromRoute(Name = "id")]
-        public string DeviceId { get;  set; }
+        public string? DeviceId { get;  set; }
 
         [JsonPropertyName("state")]
         public string State { get;  set; }

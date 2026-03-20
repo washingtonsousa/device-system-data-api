@@ -1,76 +1,96 @@
 # DeviceSystemDataAPI
 
-A .NET 9.0 Web API that handles device registration and status tracking. It exposes a RESTful interface over a MySQL database, structured around Clean Architecture with CQRS via MediatR.
+.NET 9 REST API for device registration and state management. Built with Clean Architecture, CQRS through MediatR, and MySQL for persistence.
 
 ## Stack
 
-- .NET 9.0 / ASP.NET Core
-- Entity Framework Core 9.0 + [Pomelo MySQL provider](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql)
+- .NET 9 / ASP.NET Core
+- Entity Framework Core 9 (Pomelo MySQL)
 - MediatR 14.1
 - MySQL 8.4
-- Docker
+- Docker Compose
+- xUnit + Moq
 
-## Structure
+## Project structure
 
 ```
-DeviceSystemDataAPI/   → Controllers, filters, Program.cs
-Application/           → Commands, queries and their handlers (CQRS)
-Domain/                → Entities, repository contracts
-Infrastructure/        → EF Core context, repository implementations
+DeviceSystemDataAPI/           -> Controllers, filters, Program.cs
+Application/                   -> Commands and queries (CQRS)
+Domain/                        -> Entities, repository contracts
+Infrastructure/                -> DbContext, repository implementations
+DeviceSystemDataAPI.UnitTests/ -> Unit tests
 ```
-
-Dependencies go **inward**: Presentation → Application → Domain ← Infrastructure.
 
 ## Endpoints
 
-Base path: `api/devicesystemdataapi`
+Base path: `api/DeviceData`
 
-| Method | Route | What it does |
-|---|---|---|
-| GET | `/` | Paged list — accepts `page`, `deviceId`, `brand` as query params |
-| GET | `/{id}` | Single device by ID |
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/` | Paginated list. Query params: `page`, `page_size`, `brand`, `state`, `deviceId` |
+| GET | `/{id}` | Get by ID |
 | POST | `/` | Create a device |
-| PUT | `/{id}` | Replace a device |
-| PATCH | `/{id}` | Partial update |
+| PUT | `/{id}` | Full update |
+| PATCH | `/{id}` | Update state only |
 | DELETE | `/{id}` | Delete a device |
 
-## Running with Docker
+Valid states: `available`, `in-use`, `inactive`
 
-You'll need the [.NET 9.0 SDK](https://learn.microsoft.com/en-us/dotnet/core/install/) installed locally to publish, and Docker to run the containers.
+## Prerequisites
 
-**Publish first** — the Dockerfile copies from a `publish/` folder, so you need to generate it:
+- [.NET 9 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+- [Docker](https://docs.docker.com/get-docker/) — required to run MySQL, even for local development
+
+## Getting started
+
+Docker Compose is required to run MySQL. This applies both when running the API through Docker and when running it locally with `dotnet run`.
+
+```bash
+docker compose up -d
+```
+
+This starts MySQL on port `3306` with a persistent volume. On the first run, `init.sql` creates the table.
+
+> To reset the database: `docker compose down -v` and bring it up again.
+
+### Running with Docker (API + MySQL)
 
 ```bash
 dotnet publish DeviceSystemDataAPI/DeviceSystemDataAPI.csproj -c Release -o publish
-```
-
-**Then bring everything up:**
-
-```bash
 docker compose up -d --build
 ```
 
-This starts two containers on the default Docker network:
-- The API on `http://localhost:5000`
-- MySQL 8.4 on port `3306` with a persistent volume
+The API will be available at `http://localhost:5000`.
 
-**Useful commands:**
+### Running locally (API only)
+
+With MySQL already running from Docker Compose:
 
 ```bash
-docker compose ps              # check status
-docker compose logs -f api     # tail the API logs
-docker compose down            # stop everything
-docker compose down -v         # stop and wipe the database volume
+dotnet run --project DeviceSystemDataAPI/DeviceSystemDataAPI.csproj
 ```
+
+The API will be available at `http://localhost:5036`.
+
+## Tests
+
+```bash
+dotnet test
+```
+
+29 tests covering domain entity, repository and CQRS handlers.
+
+## Swagger
+
+Interactive API docs available at:
+
+- Local: `http://localhost:5036/swagger`
+- Docker: `http://localhost:5000/swagger`
+
+## Postman
+
+The collection `DeviceSystemDataAPI.postman_collection.json` is at the project root, ready to import. The `baseUrl` variable defaults to `http://localhost:5000` (Docker) — change it to `http://localhost:5036` when running locally.
 
 ## Configuration
 
-The connection string is passed via the `CONN_STRING` environment variable, already wired in `docker-compose.yml`. If you need to point the API to a different database, just override it there.
-
-## Docs and references
-
-- [.NET SDK](https://learn.microsoft.com/en-us/dotnet/core/sdk)
-- [ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/)
-- [Pomelo.EntityFrameworkCore.MySql](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql)
-- [MediatR](https://github.com/jbogard/MediatR)
-- [Docker Compose file reference](https://docs.docker.com/compose/compose-file/)
+The connection string is set through the `CONN_STRING` environment variable, already configured in `docker-compose.yml` and `launchSettings.json`.

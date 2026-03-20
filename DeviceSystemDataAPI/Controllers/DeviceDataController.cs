@@ -46,8 +46,10 @@ namespace DeviceSystemDataAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody] PutDeviceDataCommand command)
+        public async Task<IActionResult> Put([FromRoute]string id, [FromBody] PutDeviceDataCommand command)
         {
+            command.DeviceId = id;
+
             return Ok(await _mediator.Send(command));
         }
 

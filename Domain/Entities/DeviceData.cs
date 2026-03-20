@@ -6,8 +6,8 @@ namespace Domain.Entities
 {
     public class DeviceData
     {
-        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public string Id { get; private set; }
         public string Name { get; private set; }
         public string Brand { get; private set; }

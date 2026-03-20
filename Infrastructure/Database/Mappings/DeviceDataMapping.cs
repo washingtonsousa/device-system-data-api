@@ -27,8 +27,6 @@ namespace Infrastructure.Database.Mappings
             entity.Property(e => e.Id)
                 .HasColumnName("id_device")
                 .HasColumnType("varchar(36)")
-                                .HasDefaultValueSql("(uuid())")
-
                 .IsRequired();
 
             entity.Property(e => e.Brand)

@@ -12,7 +12,7 @@ namespace Application.CQRS.Command.DeleteDeviceData
     public class DeleteDeviceDataCommand : IRequest
     {
         [FromRoute(Name = "id")]
-        public string DeviceId { get; set; }
+        public string? DeviceId { get; set; }
 
         public bool IsValid()
         {
