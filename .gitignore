@@ -1,0 +1,82 @@
+# =========================
+
+# Build / Output
+
+# =========================
+
+bin/
+obj/
+out/
+publish/
+TestResults/
+
+# =========================
+
+# User-specific files
+
+# =========================
+
+*.user
+*.userosscache
+*.suo
+*.rsuser
+
+# =========================
+
+# Visual Studio
+
+# =========================
+
+.vs/
+*.VC.db
+*.VC.opendb
+
+# =========================
+
+# Rider / JetBrains
+
+# =========================
+
+.idea/
+*.sln.iml
+
+# =========================
+
+# VS Code
+
+# =========================
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# =========================
+
+# NuGet
+
+# =========================
+
+*.nupkg
+*.snupkg
+.nuget/packages/
+packages/
+
+# =========================
+
+# Logs
+
+# =========================
+
+*.log
+logs/
+
+# =========================
+
+# OS files
+
+# =========================
+
+.DS_Store
+Thumbs.db
