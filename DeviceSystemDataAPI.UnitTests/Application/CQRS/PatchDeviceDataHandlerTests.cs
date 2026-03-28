@@ -2,6 +2,7 @@ using Application.CQRS.Command.GetDeviceData.GetPagedDeviceData;
 using Application.CQRS.Command.PatchDeviceData;
 using Domain.Constants;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Repositories;
 using Domain.UnityOfWork;
 using Moq;
@@ -35,13 +36,13 @@ namespace DeviceSystemDataAPI.UnitTests.Application.CQRS
         }
 
         [Fact]
-        public async Task ShouldThrowKeyNotFoundException_WhenDeviceDoesNotExist()
+        public async Task ShouldThrowDeviceNotFoundException_WhenDeviceDoesNotExist()
         {
             _repositoryMock.Setup(r => r.GetByIdAsync("999", false)).ReturnsAsync((DeviceData?)null);
 
             var handler = new PatchDeviceDataHandler(_repositoryMock.Object, _uowMock.Object);
 
-            await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            await Assert.ThrowsAsync<DeviceNotFoundException>(() =>
                 handler.Handle(
                     new PatchDeviceDataCommand { DeviceId = "999", State = Parameters.InUse },
                     CancellationToken.None

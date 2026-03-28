@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Repositories;
 using Domain.UnityOfWork;
 using MediatR;
@@ -18,9 +19,8 @@ namespace Application.CQRS.Command.PostDeviceData
 
         public async Task Handle(PostDeviceDataCommand request, CancellationToken cancellationToken)
         {
-
             if (!request.IsValid())
-                throw new ArgumentException("Invalid device data.");
+                throw new DeviceValidationException("Invalid device data.");
 
             var device = await _deviceDataRepository.AddAsync(DeviceData.CreateDeviceData(request.Name,request.Brand,request.State));
 

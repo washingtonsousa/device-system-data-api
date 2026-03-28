@@ -1,18 +1,11 @@
-﻿using Application.CQRS.Command.PatchDeviceData;
-using Domain.Entities;
+﻿using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Repositories;
 using Domain.UnityOfWork;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.CQRS.Command.PutDeviceData.GetPagedDeviceData
 {
-
     public class PutDeviceDataHandler : IRequestHandler<PutDeviceDataCommand, DeviceData>
     {
         private readonly IDeviceDataRepository _deviceDataRepository;
@@ -27,12 +20,12 @@ namespace Application.CQRS.Command.PutDeviceData.GetPagedDeviceData
         public async Task<DeviceData> Handle(PutDeviceDataCommand request, CancellationToken cancellationToken)
         {
             if (!request.IsValid())
-                throw new ArgumentException("Invalid device data.");
+                throw new DeviceValidationException("Invalid device data.");
 
             var device = await _deviceDataRepository.GetByIdAsync(request.DeviceId, false);
 
             if (device == null)
-                throw new KeyNotFoundException("Device data not found.");
+                throw new DeviceNotFoundException(request.DeviceId!);
 
             device.Update(request.Name, request.Brand, request.State);
 

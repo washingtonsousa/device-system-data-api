@@ -2,6 +2,7 @@ using Application.CQRS.Command.PutDeviceData;
 using Application.CQRS.Command.PutDeviceData.GetPagedDeviceData;
 using Domain.Constants;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Repositories;
 using Domain.UnityOfWork;
 using Moq;
@@ -43,13 +44,13 @@ namespace DeviceSystemDataAPI.UnitTests.Application.CQRS
         }
 
         [Fact]
-        public async Task ShouldThrowKeyNotFoundException_WhenDeviceDoesNotExist()
+        public async Task ShouldThrowDeviceNotFoundException_WhenDeviceDoesNotExist()
         {
             _repositoryMock.Setup(r => r.GetByIdAsync("999", false)).ReturnsAsync((DeviceData?)null);
 
             var handler = new PutDeviceDataHandler(_repositoryMock.Object, _uowMock.Object);
 
-            await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            await Assert.ThrowsAsync<DeviceNotFoundException>(() =>
                 handler.Handle(
                     new PutDeviceDataCommand
                     {
@@ -64,14 +65,14 @@ namespace DeviceSystemDataAPI.UnitTests.Application.CQRS
         }
 
         [Fact]
-        public async Task ShouldThrowInvalidOperationException_WhenDeviceIsInUse()
+        public async Task ShouldThrowDeviceStateConflictException_WhenDeviceIsInUse()
         {
             var device = DeviceData.CreateDeviceData("Iphone 15", "Apple", Parameters.InUse);
             _repositoryMock.Setup(r => r.GetByIdAsync("123", false)).ReturnsAsync(device);
 
             var handler = new PutDeviceDataHandler(_repositoryMock.Object, _uowMock.Object);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            await Assert.ThrowsAsync<DeviceStateConflictException>(() =>
                 handler.Handle(
                     new PutDeviceDataCommand
                     {

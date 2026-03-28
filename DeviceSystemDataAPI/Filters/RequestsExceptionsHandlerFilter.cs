@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -14,17 +14,16 @@ namespace DeviceSystemDataAPI.Filters
             var errorMessage = new ErrorMessageResult(context.Exception.Message);
             IStatusCodeActionResult result = new ObjectResult(errorMessage) { StatusCode = 500 };
 
-            if (context.Exception is KeyNotFoundException)
+            if (context.Exception is DeviceNotFoundException)
                 result = new ObjectResult(errorMessage) { StatusCode = 404 };
 
-            if (context.Exception is InvalidOperationException)
+            if (context.Exception is DeviceStateConflictException)
                 result = new ObjectResult(errorMessage) { StatusCode = 422 };
 
-            if (context.Exception is ArgumentException)
+            if (context.Exception is DeviceValidationException)
                 result = new ObjectResult(errorMessage) { StatusCode = 400 };
 
             context.Result = result;
-
         }
     }
 

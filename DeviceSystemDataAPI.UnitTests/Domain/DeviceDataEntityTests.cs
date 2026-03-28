@@ -1,5 +1,6 @@
 using Domain.Constants;
 using Domain.Entities;
+using Domain.Exceptions;
 
 namespace DeviceSystemDataAPI.UnitTests.Domain
 {
@@ -73,11 +74,11 @@ namespace DeviceSystemDataAPI.UnitTests.Domain
         }
 
         [Fact]
-        public void Update_ShouldThrowInvalidOperationException_WhenDeviceIsInUse()
+        public void Update_ShouldThrowDeviceStateConflictException_WhenDeviceIsInUse()
         {
             var device = DeviceData.CreateDeviceData("Iphone 15", "Apple", Parameters.InUse);
 
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<DeviceStateConflictException>(() =>
                 device.Update("Iphone 16", "Apple", Parameters.Available)
             );
         }

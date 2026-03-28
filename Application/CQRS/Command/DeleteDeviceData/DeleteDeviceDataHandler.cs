@@ -1,11 +1,7 @@
-﻿using Domain.Repositories;
+﻿using Domain.Exceptions;
+using Domain.Repositories;
 using Domain.UnityOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.CQRS.Command.DeleteDeviceData
 {
@@ -22,13 +18,13 @@ namespace Application.CQRS.Command.DeleteDeviceData
 
         public async Task Handle(DeleteDeviceDataCommand request, CancellationToken cancellationToken)
         {
-           var device = await _deviceDataRepository.GetByIdAsync(request.DeviceId, false);
+            var device = await _deviceDataRepository.GetByIdAsync(request.DeviceId, false);
 
-            if(device == null)
-                throw new KeyNotFoundException("Device data not found.");
+            if (device == null)
+                throw new DeviceNotFoundException(request.DeviceId!);
 
             if (device.IsInUse)
-                throw new InvalidOperationException("Cannot delete device data that is currently in use.");
+                throw new DeviceStateConflictException("Cannot delete a device that is currently in use.");
 
 
             _deviceDataRepository.RemoveAsync(device);

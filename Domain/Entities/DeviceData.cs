@@ -1,4 +1,5 @@
 ﻿using Domain.Constants;
+using Domain.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -36,7 +37,7 @@ namespace Domain.Entities
         public DeviceData Update(string name, string brand, string state)
         {
             if (IsInUse)
-                throw new InvalidOperationException("Name and brand cannot be updated while device is in use.");
+                throw new DeviceStateConflictException("Name and brand cannot be updated while device is in use.");
 
             Name = name;
             Brand = brand;
@@ -45,9 +46,16 @@ namespace Domain.Entities
             return this;
         }
 
-        public void ChangeState(string state)
+        public DeviceData Patch(string? name, string? brand, string? state)
         {
-            State = state;
+            if (IsInUse && (name != null || brand != null))
+                throw new DeviceStateConflictException("Name and brand cannot be updated while device is in use.");
+
+            if (name != null) Name = name;
+            if (brand != null) Brand = brand;
+            if (state != null) State = state;
+
+            return this;
         }
     }
 }
