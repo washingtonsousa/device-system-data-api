@@ -40,11 +40,11 @@ namespace DeviceSystemDataAPI.UnitTests.Domain
         }
 
         [Fact]
-        public void ChangeState_ShouldUpdateState()
+        public void Patch_ShouldUpdateState()
         {
             var device = DeviceData.CreateDeviceData("Iphone 15", "Apple", Parameters.Available);
 
-            device.ChangeState(Parameters.Inactive);
+            device.Patch(null, null, Parameters.Inactive);
 
             Assert.Equal(Parameters.Inactive, device.State);
         }
